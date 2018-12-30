@@ -1,14 +1,12 @@
 [CmdletBinding()]
 param()
+
+Clear-Host
     
-$xpath = "*[System[band(keywords,4503599627370496) and TimeCreated[timediff(@SystemTime) <= 84600000]]]"
-$svr = "10.0.0.25"
+$xpath = "*[System[TimeCreated[timediff(@SystemTime) <= 84600000]]]"
+# $xpath = "*[System[band(keywords,4503599627370496) and TimeCreated[timediff(@SystemTime) <= 84600000]]]"
+$svr = "192.168.56.156"
 
-if (Test-Connection -ComputerName $svr -Count 1 -Quiet) {
-
-    Write-Host "$svr is online."
-    Invoke-Command -ComputerName $svr -ScriptBlock { Get-WinEvent -LogName 'Application'  -FilterXPath $xpath } # -MaxEvents 10
-
-}
+Invoke-Command -ComputerName $svr -ArgumentList $xpath -ScriptBlock { Get-WinEvent -LogName 'Application' -FilterXPath $args[0] } -UseSSL
 
 Write-Host "end of script!`r`n"
